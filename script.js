@@ -14,9 +14,18 @@ function domReady(fn) {
 domReady(function () {
 
 	// If found you qr code
-    function onScanSuccess(decodeText, decodeResult) {
-        alert("You Qr is : " + decodeText, decodeResult);
-	}
+function onQRCodeScanned(result) {
+    var scannedLink = result.codeResult.code;
+    if (scannedLink.startsWith('http://') || scannedLink.startsWith('https://')) {
+        // Create a hyperlink
+        var hyperlink = document.createElement("a");
+        hyperlink.href = scannedLink;
+        hyperlink.textContent = scannedLink;
+        
+        // Append the hyperlink to the result container
+        document.getElementById("result").appendChild(hyperlink);
+    } else {
+        alert("Scanned QR code does not contain a valid link.");
 
 	let htmlscanner = new Html5QrcodeScanner(
 		"my-qr-reader",

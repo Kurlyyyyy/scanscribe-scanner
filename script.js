@@ -15,9 +15,9 @@ domReady(function () {
 
 	// If found you qr code
 	function onScanSuccess(decodeText, decodeResult) {
-		<script type="text/javascript">
-document.write('<a href="'+desiredLink+'">'+desiredText+'</a>');
-</script>);
+		alert(<script type="text/javascript">
+		document.write('<a href="'+desiredLink+'">'+desiredText+'</a>');
+		</script>);
 	}
 	let htmlscanner = new Html5QrcodeScanner(
 		"my-qr-reader",

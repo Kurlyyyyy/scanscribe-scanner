@@ -14,18 +14,25 @@ function domReady(fn) {
 domReady(function () {
 
 	// If found you qr code
-function onQRCodeScanned(result) {
-    var scannedLink = result.codeResult.code;
-    if (scannedLink.startsWith('http://') || scannedLink.startsWith('https://')) {
-        // Create a hyperlink
-        var hyperlink = document.createElement("a");
-        hyperlink.href = scannedLink;
-        hyperlink.textContent = scannedLink;
-        
-        // Append the hyperlink to the result container
-        document.getElementById("result").appendChild(hyperlink);
-    } else {
-        alert("Scanned QR code does not contain a valid link.");
+// Shoutout AngusCroll (https://goo.gl/pxwQGp)
+function toType(obj) {
+  if (obj === null || typeof obj === 'undefined') {
+    return `${obj}`
+  }
+
+  return {}.toString.call(obj).match(/\s([a-z]+)/i)[1].toLowerCase()
+}
+
+function getSpecialTransitionEndEvent() {
+  return {
+    bindType: TRANSITION_END,
+    delegateType: TRANSITION_END,
+    handle(event) {
+      if ($(event.target).is(this)) {
+        return event.handleObj.handler.apply(this, arguments) // eslint-disable-line prefer-rest-params
+      }
+      return undefined
+    }
 
 	let htmlscanner = new Html5QrcodeScanner(
 		"my-qr-reader",

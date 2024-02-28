@@ -1,42 +1,45 @@
 // script.js file
 
-function domReady(fn) {
-	if (
-		document.readyState === "complete" ||
-		document.readyState === "interactive"
-	) {
-		setTimeout(fn, 1000);
-	} else {
-		document.addEventListener("DOMContentLoaded", fn);
-	}
-}
+<script>
+// Initialize the scanner
+let scanner = new Instascan.Scanner({ video: document.getElementById('scanner') });
 
-domReady(function () {
-
-	// If found you qr code
-// Shoutout AngusCroll (https://goo.gl/pxwQGp)
-function toType(obj) {
-  if (obj === null || typeof obj === 'undefined') {
-    return `${obj}`
-  }
-
-  return {}.toString.call(obj).match(/\s([a-z]+)/i)[1].toLowerCase()
-}
-
-function getSpecialTransitionEndEvent() {
-  return {
-    bindType: TRANSITION_END,
-    delegateType: TRANSITION_END,
-    handle(event) {
-      if ($(event.target).is(this)) {
-        return event.handleObj.handler.apply(this, arguments) // eslint-disable-line prefer-rest-params
-      }
-      return undefined
+// Add a listener to scan QR codes
+scanner.addListener('scan', function(content) {
+    let scannedLink = content;
+    if (isValidURL(scannedLink)) {
+        // If a valid URL, create a hyperlink
+        let hyperlink = document.createElement("a");
+        hyperlink.href = scannedLink;
+        hyperlink.textContent = scannedLink;
+        
+        // Append the hyperlink to the result container
+        document.getElementById("result").innerHTML = '';
+        document.getElementById("result").appendChild(hyperlink);
+    } else {
+        alert("Scanned QR code does not contain a valid link.");
     }
-
-	let htmlscanner = new Html5QrcodeScanner(
-		"my-qr-reader",
-		{ fps: 10, qrbos: 250 }
-	);
-	htmlscanner.render(onScanSuccess);
 });
+
+// Start scanning
+Instascan.Camera.getCameras().then(function (cameras) {
+    if (cameras.length > 0) {
+        scanner.start(cameras[0]);
+    } else {
+        console.error('No cameras found.');
+    }
+}).catch(function (e) {
+    console.error(e);
+});
+
+// Function to check if a string is a valid URL
+function isValidURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
+}
+</script>
